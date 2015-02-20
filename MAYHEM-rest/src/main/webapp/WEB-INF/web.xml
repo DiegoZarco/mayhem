@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	metadata-complete="true" version="3.0">
+	
+	<!-- Configuramos el servlet distpachter para Spring MVC -->
+	<servlet>
+		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:/spring/servlet-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+
+	<!-- Este parametro es necesario para el listener de ContextLoader -->
+	<!-- El contexto loader listener es el contexto padre que será heredado 
+		por el del dispatcher -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:/spring/applicationConfig.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Listener para poder recoger parametros de la request en los beans -->
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	
+	<filter>
+		<filter-name>CorsFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>CorsFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>	
+	
+	<!-- Incluimos el filtro de spring security !-->
+	<filter> 
+		<filter-name>springSecurityFilterChain</filter-name> 
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> 
+	</filter> 
+	
+	<filter-mapping> 
+		<filter-name>springSecurityFilterChain</filter-name> 
+		<url-pattern>/*</url-pattern> 
+	</filter-mapping>	
+
+
+	<!-- Configuracion de LogBack para que muestre los logs en una tabla -->
+	<servlet>
+		<servlet-name>ViewStatusMessages</servlet-name>
+		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ViewStatusMessages</servlet-name>
+		<url-pattern>/viewLogs</url-pattern>
+	</servlet-mapping>
+	
+	<!-- <resource-ref> <res-ref-name>imaestros</res-ref-name> <res-type>javax.sql.DataSource</res-type> 
+		<res-auth>Container</res-auth> </resource-ref> -->
+</web-app>

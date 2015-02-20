@@ -1,0 +1,43 @@
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Apender generico para las trazas por anotaciones -->
+	<appender name="MAYHEM"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- Support multiple-JVM writing to the same log file -->
+		<file>/DATOS01/logs/MAYHEM.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>MAYHEM%d{dd_MM_yyyy}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>10MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Anexamos el paquete a su appender para que muestre las trazas en el 
+		fichero configurado en el appender -->
+	<logger name="es.sanitas.hos" additivity="false"
+		level="ERROR">
+		<appender-ref ref="MAYHEM" />
+	</logger>	
+	
+	<logger name="org.hibernate.type" level="TRACE">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<root level="ERROR">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>
